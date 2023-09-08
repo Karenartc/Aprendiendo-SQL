@@ -400,34 +400,43 @@ set isa_codigo=2
 where emp_cod=9;
 
 /*1. MOSTRAR LOS NOMBRES DE LOS EMPLEADOS JUNTO CON EL NOMBRE DEL DEPARTAMENTO Y LA ISAPRE QUE TIENE CONTRATADA.*/
+
+/*Where*/
 select e.emp_nombre, e.emp_apellido, d.dep_nombre, i.isa_nombre
 from empleado e, departamento d, isapre i
 where e.dep_cod = d.dep_cod
 and e.isa_codigo = i.isa_codigo;
 
+/*Inner Join*/
 select e.emp_nombre, e.emp_apellido, d.dep_nombre, i.isa_nombre
 from empleado e inner join departamento d
 on (e.dep_cod = d.dep_cod) inner join isapre i
 on (e.isa_codigo = i.isa_codigo);
 
 /*2. MOSTRAR LOS NOMBRES DE LAS ISAPRES JUNTO CON EL NOMBRE DE LA CLINICA QUE CON LA CUAL TIENE CONVENIO.*/
+
+/*Where*/
 select i.isa_nombre, cl.clin_nombre
 from isapre i, clinica cl, convenio co
 where i.isa_codigo = co.isa_codigo
 and cl.clin_codigo = co.clin_codigo;
 
+/*Inner Join*/
 select i.isa_nombre, cl.clin_nombre
 from isapre i inner join convenio co
 on (i.isa_codigo = co.isa_codigo)inner join clinica cl
 on(cl.clin_codigo = co.clin_codigo);
 
 /*3. MOSTRAR EL NOMBRE DE CADA CLINICA Y EL NOMBRE DEL EMPLEADO QUE PODRIA ATENDERSE CON CONVENIO.*/
+
+/*Where*/
 select cl.clin_nombre, e.emp_nombre, e.emp_apellido
 from empleado e, isapre i, clinica cl, convenio co
 where  e.isa_codigo = i.isa_codigo
 and i.isa_codigo = co.isa_codigo
 and cl.clin_codigo = co.clin_codigo;
 
+/*Inner Join*/
 select cl.clin_nombre, e.emp_nombre, e.emp_apellido
 from empleado e inner join isapre i
 on (e.isa_codigo = i.isa_codigo) inner join convenio co
@@ -435,6 +444,20 @@ on (i.isa_codigo = co.isa_codigo)inner join clinica cl
 on(cl.clin_codigo = co.clin_codigo);
 
 /*4. MOSTRAR EL NOMBRE DE LOS EMPLEADOS QUE NO TENDRIAN CONVENIO CON NINGUNA CLINICA.*/
+/*Where*/
+select e.emp_nombre, e.emp_apellido
+from empleado e, convenio co, isapre i
+where e.isa_codigo = i.isa_codigo
+and i.isa_codigo = co.isa_codigo 
+and co.con_codigo is null;
+
+/*Where*/
+select e.emp_nombre, e.emp_apellido
+from empleado e, convenio co
+where e.isa_codigo = co.isa_codigo 
+and co.con_codigo is null;
+
+/*Inner Join*/
 select e.emp_nombre, e.emp_apellido
 from empleado e inner join convenio co
 on (e.isa_codigo = co.isa_codigo)
