@@ -248,10 +248,8 @@ on (a.pro_cod = p.pro_cod);
 /*Select de todos los campos de departamento y proyecto, además, del nombre y apellido del empleado
 de las cuatro tablas con where*/
 select emp_nombre, emp_apellido, d.*, p.*
-from empleado e inner join departamento d
-on (e.dep_cod = d.dep_cod)inner join asignado a
-on (e.emp_cod=a.emp_cod)inner join proyecto p
-on (a.pro_cod = p.pro_cod);
+from departamento d, empleado e, asignado a, proyecto p
+where e.dep_cod = d.dep_cod and e.emp_cod=a.emp_cod and a.pro_cod = p.pro_cod;
 
 /*Select de todos los campos de departamento y proyecto, además, del nombre y apellido del empleado
 de las cuatro tablas con inner join*/
@@ -261,3 +259,183 @@ on (e.dep_cod = d.dep_cod)inner join asignado a
 on (e.emp_cod=a.emp_cod)inner join proyecto p
 on (a.pro_cod = p.pro_cod);
 
+/*Ejercicios realizados en clase
+        Clase 04-09*/
+
+/*1. Mostrar el nombre de cada uno de los empleados junto con  el nombre del departamento al cual pertenece.*/
+select e.emp_nombre, d.dep_nombre
+from empleado e, departamento d
+where e.dep_cod=d.dep_cod;
+
+select e.emp_nombre,e.emp_apellido, d.dep_nombre
+from empleado e inner join departamento d
+on e.dep_cod=d.dep_cod;
+
+/*2. Mostrar los nombres de los proyectos junto con los nombres de los empleados involucrados en los proyectos.*/
+select p.pro_nombre, e.emp_nombre, e.emp_apellido
+from empleado e, proyecto p, asignado a
+where e.emp_cod = a.emp_cod and p.pro_cod = a.pro_cod;
+
+select p.pro_nombre, e.emp_nombre, e.emp_apellido
+from empleado e inner join asignado a
+on (e.emp_cod = a.emp_cod) inner join proyecto p
+on (p.pro_cod = a.pro_cod);
+
+/*3. Mostrar los nombres de los proyectos del departamento venta.*/
+select distinct p.pro_nombre, e.dep_cod
+from proyecto p, asignado a, empleado e, departamento d
+where p.pro_cod = a.pro_cod
+  and a.emp_cod = e.emp_cod
+  and e.dep_cod = d.dep_cod
+  and d.dep_nombre = 'VENTA';
+
+select distinct p.pro_nombre, e.dep_cod
+from proyecto p inner join asignado a 
+on (p.pro_cod = a.pro_cod) inner join empleado e
+on (a.emp_cod = e.emp_cod) inner join departamento d
+on (e.dep_cod = d.dep_cod) 
+where d.dep_nombre = 'VENTA';
+
+/*Realizado por el profe*/
+select distinct p.pro_nombre, e.dep_cod
+from proyecto p inner join asignado a
+on (p.pro_cod = a.pro_cod) inner join empleado e
+on (a.emp_cod=e.emp_cod)
+where e.dep_cod in (select dep_cod from departamento where dep_nombre='VENTA');
+
+/*4. Mostrar los nombres de los proyectos y el nombre de los departamentos involucrados*/
+select distinct p.pro_nombre, d.dep_nombre
+from proyecto p inner join asignado a
+on (p.pro_cod = a.pro_cod) inner join empleado e
+on (a.emp_cod=e.emp_cod) inner join departamento d
+on (e.dep_cod=d.dep_cod);
+
+select distinct p.pro_nombre, d.dep_nombre
+from proyecto p, asignado a, empleado e, departamento d
+where p.pro_cod = a.pro_cod
+and a.emp_cod=e.emp_cod
+and e.dep_cod=d.dep_cod;
+
+/*Ejercicios a realizar en Casa*/
+
+create table isapre
+(isa_codigo number,
+ isa_nombre varchar2(50),
+ constraint pk_isapre primary key(isa_codigo));
+
+create table clinica
+(clin_codigo number,
+ clin_nombre varchar2(50),
+ constraint pk_clinica primary key(clin_codigo));
+
+create table convenio
+(con_codigo number,
+ con_descuento number,
+ isa_codigo number,
+ clin_codigo number,
+ constraint con_codigo primary key(con_codigo));
+
+alter table convenio
+add(constraint fk_convenio1 foreign key (isa_codigo)
+    references isapre(isa_codigo),
+    constraint fk_convenio2 foreign key (clin_codigo)
+    references clinica (clin_codigo));
+
+alter table empleado
+add(isa_codigo number,
+    constraint fk_emp2 foreign key (isa_codigo)
+    references isapre (isa_codigo));
+
+
+insert into isapre values(1, 'ISAPRE 1');
+insert into isapre values(2, 'ISAPRE 2');
+insert into isapre values(3, 'ISAPRE 3');
+insert into isapre values(4, 'ISAPRE 4');
+
+insert into clinica values(1,'CLINICA 1');
+insert into clinica values(2,'CLINICA 2');
+insert into clinica values(3,'CLINICA 3');
+insert into clinica values(4,'CLINICA 4');
+
+insert into convenio values(1,15,1,1);
+insert into convenio values(2,12,1,3);
+insert into convenio values(3,15,2,1);
+insert into convenio values(4,11,3,2);
+insert into convenio values(5,15,3,1);
+
+update empleado
+set isa_codigo=1
+where emp_cod=1;
+
+update empleado
+set isa_codigo=2
+where emp_cod=2;
+
+update empleado
+set isa_codigo=3
+where emp_cod=3;
+
+update empleado
+set isa_codigo=1
+where emp_cod=4;
+
+update empleado
+set isa_codigo=2
+where emp_cod=5;
+
+update empleado
+set isa_codigo=1
+where emp_cod=6;
+
+update empleado
+set isa_codigo=3
+where emp_cod=7;
+
+update empleado
+set isa_codigo=3
+where emp_cod=8;
+
+update empleado
+set isa_codigo=2
+where emp_cod=9;
+
+/*1. MOSTRAR LOS NOMBRES DE LOS EMPLEADOS JUNTO CON EL NOMBRE DEL DEPARTAMENTO Y LA ISAPRE QUE TIENE CONTRATADA.*/
+select e.emp_nombre, e.emp_apellido, d.dep_nombre, i.isa_nombre
+from empleado e, departamento d, isapre i
+where e.dep_cod = d.dep_cod
+and e.isa_codigo = i.isa_codigo;
+
+select e.emp_nombre, e.emp_apellido, d.dep_nombre, i.isa_nombre
+from empleado e inner join departamento d
+on (e.dep_cod = d.dep_cod) inner join isapre i
+on (e.isa_codigo = i.isa_codigo);
+
+/*2. MOSTRAR LOS NOMBRES DE LAS ISAPRES JUNTO CON EL NOMBRE DE LA CLINICA QUE CON LA CUAL TIENE CONVENIO.*/
+select i.isa_nombre, cl.clin_nombre
+from isapre i, clinica cl, convenio co
+where i.isa_codigo = co.isa_codigo
+and cl.clin_codigo = co.clin_codigo;
+
+select i.isa_nombre, cl.clin_nombre
+from isapre i inner join convenio co
+on (i.isa_codigo = co.isa_codigo)inner join clinica cl
+on(cl.clin_codigo = co.clin_codigo);
+
+/*3. MOSTRAR EL NOMBRE DE CADA CLINICA Y EL NOMBRE DEL EMPLEADO QUE PODRIA ATENDERSE CON CONVENIO.*/
+select cl.clin_nombre, e.emp_nombre, e.emp_apellido
+from empleado e, isapre i, clinica cl, convenio co
+where  e.isa_codigo = i.isa_codigo
+and i.isa_codigo = co.isa_codigo
+and cl.clin_codigo = co.clin_codigo;
+
+select cl.clin_nombre, e.emp_nombre, e.emp_apellido
+from empleado e inner join isapre i
+on (e.isa_codigo = i.isa_codigo) inner join convenio co
+on (i.isa_codigo = co.isa_codigo)inner join clinica cl
+on(cl.clin_codigo = co.clin_codigo);
+
+/*4. MOSTRAR EL NOMBRE DE LOS EMPLEADOS QUE NO TENDRIAN CONVENIO CON NINGUNA CLINICA.*/
+select e.emp_nombre, e.emp_apellido
+from empleado e inner join convenio co
+on (e.isa_codigo = co.isa_codigo)
+where co.con_codigo is null;
