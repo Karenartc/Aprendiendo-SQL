@@ -462,3 +462,14 @@ select e.emp_nombre, e.emp_apellido
 from empleado e inner join convenio co
 on (e.isa_codigo = co.isa_codigo)
 where co.con_codigo is null;
+
+
+--5) Mostrar los datos de los empleados, se debe incluir el nombre de la isapre, en este caso se mostar todas las isapres, tengan o no afiliados
+
+select e.*, isa_nombre
+from empleado e right join isapre i
+on (e.isa_codigo=i.isa_codigo);
+
+select e.*, isa_nombre
+from empleado e, isapre i
+where e.isa_codigo(+)=i.isa_codigo;
